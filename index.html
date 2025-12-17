@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Serviço Operacional - 17º BPM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ccc;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 80px;
+            background-color: #2c3e50;
+            border-radius: 5px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: #555;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        
+        .underline {
+            text-decoration: underline;
+        }
+        
+        .app-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .section-title {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .section-content {
+            padding-left: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        
+        .btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #1a252f;
+        }
+        
+        .btn-save {
+            background-color: #27ae60;
+        }
+        
+        .btn-save:hover {
+            background-color: #219653;
+        }
+        
+        .btn-export {
+            background-color: #2980b9;
+        }
+        
+        .btn-export:hover {
+            background-color: #1c5d87;
+        }
+        
+        .btn-clear {
+            background-color: #e74c3c;
+        }
+        
+        .btn-clear:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-table {
+            background-color: #8e44ad;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .btn-table:hover {
+            background-color: #7d3c98;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-saved {
+            background-color: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status-unsaved {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .col {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2980b9;
+        }
+        
+        .instructions h3 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        
+        .timestamp {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        .placeholder {
+            color: #999;
+        }
+        
+        .table-input {
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .app-container {
+                padding: 15px;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* CSS PARA O TEMPLATE DO PDF */
+        .pdf-template {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 210mm;
+            min-height: 297mm;
+            background-color: white;
+            font-family: Arial, sans-serif;
+            padding: 30mm 20mm 20mm 30mm;
+            font-size: 12pt;
+            line-height: 1.0;
+        }
+        
+        .pdf-page {
+            min-height: 247mm;
+            position: relative;
+            width: 160mm;
+        }
+        
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 10px;
+            line-height: 1.0;
+        }
+        
+        .pdf-title {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 2px 0;
+            text-transform: uppercase;
+            color: black;
+            line-height: 1.0;
+        }
+        
+        .pdf-report-title {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            text-decoration: underline;
+            color: black;
+            line-height: 1.0;
+            text-align: center;
+        }
+        
+        .pdf-info-line {
+            font-size: 12pt;
+            line-height: 1.0;
+            margin-bottom: 5px;
+        }
+        
+        .pdf-section-title {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 8px 0 3px 0;
+            line-height: 1.0;
+        }
+        
+        .pdf-content {
+            font-size: 12pt;
+            line-height: 1.0;
+            margin-bottom: 3px;
+        }
+        
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 5px 0;
+            font-size: 10pt;
+            line-height: 1.0;
+        }
+        
+        .pdf-table th, .pdf-table td {
+            border: 1px solid #000;
+            padding: 3px;
+            text-align: left;
+            vertical-align: top;
+            line-height: 1.0;
+        }
+        
+        .pdf-table th {
+            font-weight: bold;
+            font-size: 10pt;
+        }
+        
+        .assinatura-container {
+            margin-top: 30px;
+            text-align: center;
+            line-height: 1.0;
+        }
+        
+        .assinatura-nome {
+            font-size: 12pt;
+            font-weight: normal;
+            margin-bottom: 5px;
+        }
+        
+        .qra-negrito {
+            font-weight: bold;
+        }
+        
+        .assinatura-funcao {
+            font-size: 11pt;
+            margin-top: 10px;
+        }
+        
+        .page-break {
+            margin-top: 20px;
+        }
+        
+        .page-number {
+            position: absolute;
+            bottom: 15mm;
+            right: 20mm;
+            font-size: 10pt;
+            color: #666;
+        }
+        
+        .permanencia-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .permanencia-table th, .permanencia-table td {
+            border: 1px solid #000;
+            padding: 3px;
+        }
+        
+        .complex-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+        
+        .complex-table th, .complex-table td {
+            border: 1px solid #000;
+            padding: 2px;
+            text-align: center;
+        }
+        
+        .complex-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .empty-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .empty-table th, .empty-table td {
+            border: 1px solid #000;
+            padding: 3px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo">PM</div>
+            <div>
+                <h1>ESTADO DA PARAÍBA<br>POLÍCIA MILITAR</h1>
+                <p class="subtitle">COMANDO DO POLICIAMENTO REGIONAL III<br>17º BATALHÃO DE POLÍCIA MILITAR</p>
+            </div>
+        </div>
+        <h2 class="underline">RELATÓRIO DE SERVIÇO OPERACIONAL</h2>
+    </header>
+    
+    <div class="instructions">
+        <h3><i class="fas fa-info-circle"></i> Instruções de Uso</h3>
+        <p>Preencha todos os campos abaixo com as informações do serviço operacional. Para adicionar mais linhas nas tabelas, use o botão "+". O sistema salva automaticamente no seu dispositivo a cada alteração. No final, use o botão "Exportar como PDF" para gerar um documento no formato oficial.</p>
+        <div id="save-status" class="status-indicator status-saved">Dados salvos localmente</div>
+    </div>
+    
+    <div class="app-container" id="report-container">
+        <div class="section">
+            <div class="section-title">DATA E HORÁRIO</div>
+            <div class="section-content">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            <label for="data"><span class="underline">DATA</span>:</label>
+                            <input type="text" id="data" placeholder="Ex: Dia 09 para o dia 10 de dezembro de 2025 (terça-feira para quarta-feira)">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group">
+                            <label for="horario"><span class="underline">HORÁRIO</span>:</label>
+                            <input type="text" id="horario" placeholder="Ex: Das 08h às 08h (24 horas)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">01 - ESCALA DE SERVIÇO</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="escala">Número da Escala:</label>
+                    <input type="text" id="escala" placeholder="Ex: 902617">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">02 - PERMANÊNCIA NA SEDE DO 17º BPM</div>
+            <div class="section-content">
+                <div class="table-container">
+                    <table id="permanencia-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">HORÁRIO</th>
+                                <th style="width: 70%;">PERMANENTE</th>
+                                <th style="width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="permanencia-body">
+                            <tr>
+                                <td><input type="text" class="table-input" placeholder="Ex: 08h00min às 11h00"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: ST QGP ESTELA/1º SGT QGP AELSON"></td>
+                                <td><button class="btn btn-table remove-row"><i class="fas fa-times"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="table-input" placeholder="Ex: 11h00min às 13h00min"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: ST ESTELA/1º SGT AELSON"></td>
+                                <td><button class="btn btn-table remove-row"><i class="fas fa-times"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn" id="add-permanencia"><i class="fas fa-plus"></i> Adicionar Linha</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">03 - INFORMAÇÕES ADMINISTRATIVAS DO SERVIÇO</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="infoAdmin">Informações:</label>
+                    <textarea id="infoAdmin" placeholder="Digite as informações administrativas do serviço..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">04 - INSTALAÇÕES/ÁGUA ENERGIA E COMUNICAÇÃO</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="instalacoes">Informações:</label>
+                    <textarea id="instalacoes" placeholder="Informe sobre instalações, água, energia, comunicação..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">05 - OCORRÊNCIAS ENVOLVENDO POLICIAIS MILITARES OU CIVIS, BOMBEIROS MILITARES E/OU AUTORIDADES DE OUTRAS INSTITUIÇÕES</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <textarea id="ocorrencias" placeholder="Descreva as ocorrências... (Deixe em branco ou digite 'Sem alterações' se não houver)"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">06 - REMANEJAMENTO DE SERVIÇO</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="remanejamento">Informações:</label>
+                    <textarea id="remanejamento" placeholder="Descreva os remanejamentos de serviço..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">07 - PERMUTAS DE SERVIÇO</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="permutas">Informações:</label>
+                    <input type="text" id="permutas" placeholder="Ex: Conforme Escala de Nº 902617">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">08 - DISPENSA DO SERVIÇO</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="dispensa">Informações:</label>
+                    <input type="text" id="dispensa" placeholder="Ex: Sem Alterações">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">09 - FALTA AO SERVIÇO/ATRASOS</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="faltas">Informações:</label>
+                    <input type="text" id="faltas" placeholder="Ex: Sem alterações">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">10 - OBSERVAÇÕES GERAIS</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="observacoes">Informações:</label>
+                    <textarea id="observacoes" placeholder="Digite as observações gerais..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">11 - ALTERAÇÃO EM VIATURA</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="alteracao-viatura">Informações:</label>
+                    <textarea id="alteracao-viatura" placeholder="Descreva as alterações em viaturas..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">12 - DIVERSOS E ANEXOS</div>
+            <div class="section-content">
+                <div class="input-group">
+                    <label for="diversos">Informações:</label>
+                    <textarea id="diversos" placeholder="Liste os diversos itens e anexos..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">13 - VEÍCULOS E OUTROS APREENDIDOS NO PÁTIO INTERNO DO 17º BPM</div>
+            <div class="section-content">
+                <div class="table-container">
+                    <table id="veiculos-table">
+                        <thead>
+                            <tr>
+                                <th>Nº</th>
+                                <th>MARCA</th>
+                                <th>MODELO</th>
+                                <th>PLACA/CHASSI</th>
+                                <th>COR</th>
+                                <th>MOTIVO</th>
+                                <th>DATA/HORA</th>
+                                <th>LOCAL</th>
+                                <th>APREENSOR</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="veiculos-body">
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" class="table-input" placeholder="Ex: HONDA"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: POP 100"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: MOJ 7126 / 9C2HB02108R041162"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: AZUL"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: RESTRIÇÃO ADMINISTRATIVA"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: 09/12/2025 ÀS 17H50MIN"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: MAMANGUAPE"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: 3º SGT LIMA 522.235"></td>
+                                <td><button class="btn btn-table remove-veiculo"><i class="fas fa-times"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn" id="add-veiculo"><i class="fas fa-plus"></i> Adicionar Veículo</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">14 - QUADRO DE CHAVES DO 17º BPM</div>
+            <div class="section-content">
+                <div class="table-container">
+                    <table id="chaves-table">
+                        <thead>
+                            <tr>
+                                <th>DATA</th>
+                                <th>SALA</th>
+                                <th>HORA INICIAL</th>
+                                <th>MILITAR/CIVIL</th>
+                                <th>HORA DE ENTREGA</th>
+                                <th>MOTIVO</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="chaves-body">
+                            <tr>
+                                <td><input type="text" class="table-input" placeholder="Ex: 10/12/2025"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: Sala do Comando"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: 08h00"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: ST JOSUÉ"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: 17h00"></td>
+                                <td><input type="text" class="table-input" placeholder="Ex: Serviço administrativo"></td>
+                                <td><button class="btn btn-table remove-chave"><i class="fas fa-times"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn" id="add-chave"><i class="fas fa-plus"></i> Adicionar Registro</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">ASSINATURA</div>
+            <div class="section-content">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            <label for="local">Local e Data:</label>
+                            <input type="text" id="local" placeholder="Ex: Mamanguape/PB, 10 de dezembro de 2025">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            <label for="nomeCompleto">Nome Completo do Militar:</label>
+                            <input type="text" id="nomeCompleto" placeholder="Ex: LEWY PATRICK MARTINS DE OLIVEIRA">
+                            <small class="timestamp">Digite em CAIXA ALTA</small>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group">
+                            <label for="qra">QRA (Sobrenome):</label>
+                            <input type="text" id="qra" placeholder="Ex: OLIVEIRA">
+                            <small class="timestamp">Apenas o sobrenome em CAIXA ALTA</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            <label for="posto">Posto/Grau Hierárquico:</label>
+                            <select id="posto">
+                                <option value="">Selecione o posto</option>
+                                <option value="SOLDADO QGP">SOLDADO QGP</option>
+                                <option value="CABO QGP">CABO QGP</option>
+                                <option value="3º SGT QGP">3º SGT QGP</option>
+                                <option value="2º SGT QGP">2º SGT QGP</option>
+                                <option value="1º SGT QGP">1º SGT QGP</option>
+                                <option value="SUB TENENTE QGP">SUB TENENTE QGP</option>
+                                <option value="ASPIRANTE A OFICIAL">ASPIRANTE A OFICIAL</option>
+                                <option value="2º TENENTE QOPM">2º TENENTE QOPM</option>
+                                <option value="1º TENENTE QOPM">1º TENENTE QOPM</option>
+                                <option value="CAPITÃO QOPM">CAPITÃO QOPM</option>
+                                <option value="MAJOR QOPM">MAJOR QOPM</option>
+                                <option value="TENENTE CORONEL QOPM">TENENTE CORONEL QOPM</option>
+                                <option value="CORONEL QOPM">CORONEL QOPM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group">
+                            <label for="funcao">Função:</label>
+                            <input type="text" id="funcao" placeholder="Ex: CPU 17º BPM">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="buttons-container">
+            <button class="btn btn-save" id="save-btn"><i class="fas fa-save"></i> Salvar Localmente</button>
+            <button class="btn btn-export" id="export-btn"><i class="fas fa-file-pdf"></i> Exportar como PDF</button>
+            <button class="btn btn-clear" id="clear-btn"><i class="fas fa-trash"></i> Limpar Formulário</button>
+        </div>
+    </div>
+
+    <div class="pdf-template hidden" id="pdf-template">
+        <div class="pdf-page" id="pdf-page-1">
+            <div class="pdf-header">
+                <div class="pdf-title">ESTADO DA PARAÍBA</div>
+                <div class="pdf-title">POLÍCIA MILITAR</div>
+                <div class="pdf-title">COMANDO DO POLICIAMENTO REGIONAL III</div>
+                <div class="pdf-title">17º BATALHÃO DE POLÍCIA MILITAR</div>
+                <div class="pdf-report-title">RELATÓRIO DE SERVIÇO OPERACIONAL</div>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <div class="pdf-info-line"><strong>DATA</strong>: <span id="pdf-data">Dia 09 para o dia 10 de dezembro de 2025 (terça-feira para quarta-feira).</span></div>
+                <div class="pdf-info-line"><strong>HORÁRIO</strong>: <span id="pdf-horario">Das 08h às 08h (24 horas).</span></div>
+            </div>
+            
+            <div class="pdf-section-title">01-ESCALA DE SERVIÇO:</div>
+            <div class="pdf-content">• Conforme Escala de nº <span id="pdf-escala">902617</span>.</div>
+            
+            <div class="pdf-section-title">02-PERMANÊNCIA NA SEDE DO 17º BPM:</div>
+            <table class="permanencia-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">HORÁRIO</th>
+                        <th style="width: 70%;">PERMANENTE</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-permanencia">
+                    <tr><td>08h00min às 11h00</td><td></td></tr>
+                    <tr><td>11h00min às 13h00min</td><td></td></tr>
+                    <tr><td>13h00min às 17h00min</td><td></td></tr>
+                    <tr><td>17h00min às 20h00min</td><td></td></tr>
+                    <tr><td>20h00min às 23h00min</td><td></td></tr>
+                    <tr><td>23h00min às 02h00min</td><td></td></tr>
+                    <tr><td>02h00min às 05h00min</td><td></td></tr>
+                    <tr><td>05h00min às 08h00min</td><td></td></tr>
+                </tbody>
+            </table>
+            
+            <div class="pdf-section-title">03-INFORMAÇÕES ADMINISTRATIVAS DO SERVIÇO:</div>
+            <div class="pdf-content">• <span id="pdf-infoAdmin"></span></div>
+            
+            <div class="pdf-section-title">04-INSTALAÇÕES/ÁGUA ENERGIA E COMUNICAÇÃO:</div>
+            <div class="pdf-content">• <span id="pdf-instalacoes"></span></div>
+            
+            <div class="page-number">1</div>
+        </div>
+        
+        <div class="pdf-page page-break" id="pdf-page-2">
+            <div class="pdf-section-title">05-OCORRÊNCIAS ENVOLVENDO POLICIAIS MILITARES OU CIVIS, BOMBEIROS MILITARES E/ OU AUTORIDADES DE OUTRAS INSTITUIÇÕES:</div>
+            <div class="pdf-content">• <span id="pdf-ocorrencias">Sem alterações.</span></div>
+            
+            <div class="pdf-section-title">06-REMANEJAMENTO DE SERVIÇO:</div>
+            <div class="pdf-content">• <span id="pdf-remanejamento"></span></div>
+            
+            <div class="pdf-section-title">07-PERMUTAS DE SERVICO:</div>
+            <div class="pdf-content">• <span id="pdf-permutas"></span></div>
+            
+            <div class="pdf-section-title">08-DISPENSA DO SERVIÇO:</div>
+            <div class="pdf-content">• <span id="pdf-dispensa">Sem Alterações.</span></div>
+            
+            <div class="pdf-section-title">09-FALTA AO SERVIÇO/ATRASOS:</div>
+            <div class="pdf-content">• <span id="pdf-faltas">Sem alterações.</span></div>
+            
+            <div class="pdf-section-title">10-OBSERVAÇÕES GERAIS:</div>
+            <div class="pdf-content">• <span id="pdf-observacoes"></span></div>
+            
+            <div class="pdf-section-title">11-ALTERAÇÃO EM VIATURA:</div>
+            <div class="pdf-content">• <span id="pdf-alteracao-viatura"></span></div>
+            
+            <div class="pdf-section-title">12-DIVERSOS E ANEXOS:</div>
+            <div class="pdf-content">• <span id="pdf-diversos"></span></div>
+            
+            <div class="page-number">2</div>
+        </div>
+        
+        <div class="pdf-page page-break" id="pdf-page-3">
+            <div class="pdf-section-title">13-VEICULOS E OUTROS APREENDIDOS NO PÁTIO INTERNO DO 17º BPM:</div>
+            <table class="complex-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">Nº.</th>
+                        <th style="width: 10%;">MARCA</th>
+                        <th style="width: 8%;">MOD.</th>
+                        <th style="width: 18%;">PLACA<br>CHASSI</th>
+                        <th style="width: 7%;">COR</th>
+                        <th style="width: 14%;">MOTIVO</th>
+                        <th style="width: 12%;">DATA/<br>HORA</th>
+                        <th style="width: 10%;">LOCAL</th>
+                        <th style="width: 16%;">APREENSOR</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-veiculos">
+                </tbody>
+            </table>
+            
+            <div class="pdf-section-title">14-QUADRO DE CHAVES DO 17º BPM:</div>
+            <table class="empty-table">
+                <thead>
+                    <tr>
+                        <th style="width: 12%;">DATA</th>
+                        <th style="width: 18%;">SALA</th>
+                        <th style="width: 12%;">HORA INICIAL</th>
+                        <th style="width: 25%;">MILITAR/CIVIL</th>
+                        <th style="width: 12%;">HORA DE<br>ENTREGA</th>
+                        <th style="width: 21%;">MOTIVO</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-chaves">
+                </tbody>
+            </table>
+            
+            <div class="assinatura-container">
+                <div><span id="pdf-local">Mamanguape/PB, 10 de dezembro de 2025.</span></div>
+                <div style="margin-top: 30px;">
+                    <div class="assinatura-nome" id="pdf-assinatura">
+                        LEWY PATRICK MARTINS DE <span class="qra-negrito">OLIVEIRA</span> - SOLDADO QGP
+                    </div>
+                    <div class="assinatura-funcao" id="pdf-funcao">CPU 17º BPM</div>
+                </div>
+            </div>
+            
+            <div class="page-number">3</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const saveBtn = document.getElementById('save-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const addPermanenciaBtn = document.getElementById('add-permanencia');
+            const addVeiculoBtn = document.getElementById('add-veiculo');
+            const addChaveBtn = document.getElementById('add-chave');
+            const saveStatus = document.getElementById('save-status');
+            
+            loadSavedData();
+            
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                element.addEventListener('input', autoSave);
+                element.addEventListener('change', autoSave);
+            });
+            
+            saveBtn.addEventListener('click', saveData);
+            exportBtn.addEventListener('click', exportToPDF);
+            clearBtn.addEventListener('click', clearForm);
+            addPermanenciaBtn.addEventListener('click', addPermanenciaRow);
+            addVeiculoBtn.addEventListener('click', addVeiculoRow);
+            addChaveBtn.addEventListener('click', addChaveRow);
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-row') || 
+                    e.target.parentElement.classList.contains('remove-row')) {
+                    const btn = e.target.classList.contains('remove-row') ? e.target : e.target.parentElement;
+                    const row = btn.closest('tr');
+                    if (row && document.querySelectorAll('#permanencia-body tr').length > 1) {
+                        row.remove();
+                        autoSave();
+                    }
+                }
+                
+                if (e.target.classList.contains('remove-veiculo') || 
+                    e.target.parentElement.classList.contains('remove-veiculo')) {
+                    const btn = e.target.classList.contains('remove-veiculo') ? e.target : e.target.parentElement;
+                    const row = btn.closest('tr');
+                    if (row) {
+                        row.remove();
+                        updateVeiculoNumbers();
+                        autoSave();
+                    }
+                }
+                
+                if (e.target.classList.contains('remove-chave') || 
+                    e.target.parentElement.classList.contains('remove-chave')) {
+                    const btn = e.target.classList.contains('remove-chave') ? e.target : e.target.parentElement;
+                    const row = btn.closest('tr');
+                    if (row) {
+                        row.remove();
+                        autoSave();
+                    }
+                }
+            });
+            
+            function autoSave() {
+                saveData();
+                saveStatus.textContent = 'Dados salvos automaticamente';
+                saveStatus.className = 'status-indicator status-saved';
+                
+                setTimeout(() => {
+                    saveStatus.textContent = 'Dados salvos localmente';
+                }, 3000);
+            }
+            
+            function saveData() {
+                const formData = {
+                    data: document.getElementById('data').value,
+                    horario: document.getElementById('horario').value,
+                    escala: document.getElementById('escala').value,
+                    permanencia: getTableData('permanencia-body'),
+                    infoAdmin: document.getElementById('infoAdmin').value,
+                    instalacoes: document.getElementById('instalacoes').value,
+                    ocorrencias: document.getElementById('ocorrencias').value,
+                    remanejamento: document.getElementById('remanejamento').value,
+                    permutas: document.getElementById('permutas').value,
+                    dispensa: document.getElementById('dispensa').value,
+                    faltas: document.getElementById('faltas').value,
+                    observacoes: document.getElementById('observacoes').value,
+                    alteracaoViatura: document.getElementById('alteracao-viatura').value,
+                    diversos: document.getElementById('diversos').value,
+                    veiculos: getTableData('veiculos-body'),
+                    chaves: getTableData('chaves-body'),
+                    local: document.getElementById('local').value,
+                    nomeCompleto: document.getElementById('nomeCompleto').value,
+                    qra: document.getElementById('qra').value,
+                    posto: document.getElementById('posto').value,
+                    funcao: document.getElementById('funcao').value,
+                    lastSave: new Date().toISOString()
+                };
+                
+                localStorage.setItem('relatorioOperacional', JSON.stringify(formData));
+                
+                saveStatus.textContent = 'Dados salvos em ' + new Date().toLocaleTimeString();
+                saveStatus.className = 'status-indicator status-saved';
+            }
+            
+            function loadSavedData() {
+                const savedData = localStorage.getItem('relatorioOperacional');
+                if (savedData) {
+                    const formData = JSON.parse(savedData);
+                    
+                    document.getElementById('data').value = formData.data || '';
+                    document.getElementById('horario').value = formData.horario || '';
+                    document.getElementById('escala').value = formData.escala || '';
+                    document.getElementById('infoAdmin').value = formData.infoAdmin || '';
+                    document.getElementById('instalacoes').value = formData.instalacoes || '';
+                    document.getElementById('ocorrencias').value = formData.ocorrencias || '';
+                    document.getElementById('remanejamento').value = formData.remanejamento || '';
+                    document.getElementById('permutas').value = formData.permutas || '';
+                    document.getElementById('dispensa').value = formData.dispensa || '';
+                    document.getElementById('faltas').value = formData.faltas || '';
+                    document.getElementById('observacoes').value = formData.observacoes || '';
+                    document.getElementById('alteracao-viatura').value = formData.alteracaoViatura || '';
+                    document.getElementById('diversos').value = formData.diversos || '';
+                    document.getElementById('local').value = formData.local || '';
+                    document.getElementById('nomeCompleto').value = formData.nomeCompleto || '';
+                    document.getElementById('qra').value = formData.qra || '';
+                    document.getElementById('posto').value = formData.posto || '';
+                    document.getElementById('funcao').value = formData.funcao || '';
+                    
+                    if (formData.permanencia && formData.permanencia.length > 0) {
+                        populateTable('permanencia-body', formData.permanencia, false);
+                    }
+                    
+                    if (formData.veiculos && formData.veiculos.length > 0) {
+                        populateTable('veiculos-body', formData.veiculos, true);
+                        updateVeiculoNumbers();
+                    }
+                    
+                    if (formData.chaves && formData.chaves.length > 0) {
+                        populateTable('chaves-body', formData.chaves, false);
+                    }
+                    
+                    if (formData.lastSave) {
+                        saveStatus.textContent = 'Último salvamento: ' + new Date(formData.lastSave).toLocaleString();
+                    }
+                }
+            }
+            
+            function getTableData(tableBodyId) {
+                const tableBody = document.getElementById(tableBodyId);
+                const rows = tableBody.querySelectorAll('tr');
+                const data = [];
+                
+                rows.forEach(row => {
+                    const inputs = row.querySelectorAll('input');
+                    const rowData = [];
+                    
+                    inputs.forEach(input => {
+                        rowData.push(input.value);
+                    });
+                    
+                    data.push(rowData);
+                });
+                
+                return data;
+            }
+            
+            function populateTable(tableBodyId, data, isVeiculosTable) {
+                const tableBody = document.getElementById(tableBodyId);
+                tableBody.innerHTML = '';
+                
+                data.forEach((rowData, index) => {
+                    const row = document.createElement('tr');
+                    
+                    if (isVeiculosTable) {
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            ${rowData.map((cell, i) => 
+                                `<td><input type="text" class="table-input" value="${cell || ''}"></td>`
+                            ).join('')}
+                            <td><button class="btn btn-table remove-veiculo"><i class="fas fa-times"></i></button></td>
+                        `;
+                    } else {
+                        row.innerHTML = `
+                            ${rowData.map(cell => 
+                                `<td><input type="text" class="table-input" value="${cell || ''}"></td>`
+                            ).join('')}
+                            <td><button class="btn btn-table ${tableBodyId === 'permanencia-body' ? 'remove-row' : 'remove-chave'}"><i class="fas fa-times"></i></button></td>
+                        `;
+                    }
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                tableBody.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', autoSave);
+                });
+            }
+            
+            function addPermanenciaRow() {
+                const tableBody = document.getElementById('permanencia-body');
+                const newRow = document.createElement('tr');
+                
+                newRow.innerHTML = `
+                    <td><input type="text" class="table-input" placeholder="Ex: 08h00min às 11h00"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: ST QGP ESTELA/1º SGT QGP AELSON"></td>
+                    <td><button class="btn btn-table remove-row"><i class="fas fa-times"></i></button></td>
+                `;
+                
+                tableBody.appendChild(newRow);
+                
+                newRow.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', autoSave);
+                });
+                
+                autoSave();
+            }
+            
+            function addVeiculoRow() {
+                const tableBody = document.getElementById('veiculos-body');
+                const rowCount = tableBody.querySelectorAll('tr').length;
+                
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${rowCount + 1}</td>
+                    <td><input type="text" class="table-input" placeholder="Ex: HONDA"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: POP 100"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: MOJ 7126 / 9C2HB02108R041162"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: AZUL"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: RESTRIÇÃO ADMINISTRATIVA"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: 09/12/2025 ÀS 17H50MIN"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: MAMANGUAPE"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: 3º SGT LIMA 522.235"></td>
+                    <td><button class="btn btn-table remove-veiculo"><i class="fas fa-times"></i></button></td>
+                `;
+                
+                tableBody.appendChild(newRow);
+                
+                newRow.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', autoSave);
+                });
+                
+                autoSave();
+            }
+            
+            function addChaveRow() {
+                const tableBody = document.getElementById('chaves-body');
+                
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td><input type="text" class="table-input" placeholder="Ex: 10/12/2025"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: Sala do Comando"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: 08h00"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: ST JOSUÉ"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: 17h00"></td>
+                    <td><input type="text" class="table-input" placeholder="Ex: Serviço administrativo"></td>
+                    <td><button class="btn btn-table remove-chave"><i class="fas fa-times"></i></button></td>
+                `;
+                
+                tableBody.appendChild(newRow);
+                
+                newRow.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', autoSave);
+                });
+                
+                autoSave();
+            }
+            
+            function updateVeiculoNumbers() {
+                const tableBody = document.getElementById('veiculos-body');
+                const rows = tableBody.querySelectorAll('tr');
+                
+                rows.forEach((row, index) => {
+                    row.cells[0].textContent = index + 1;
+                });
+            }
+            
+            function clearForm() {
+                if (confirm('Tem certeza que deseja limpar todos os campos? Isso removerá todos os dados não salvos.')) {
+                    document.querySelectorAll('input, textarea, select').forEach(element => {
+                        if (element.type !== 'button') {
+                            element.value = '';
+                        }
+                        if (element.tagName === 'SELECT') {
+                            element.selectedIndex = 0;
+                        }
+                    });
+                    
+                    document.getElementById('permanencia-body').innerHTML = `
+                        <tr>
+                            <td><input type="text" class="table-input" placeholder="Ex: 08h00min às 11h00"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: ST QGP ESTELA/1º SGT QGP AELSON"></td>
+                            <td><button class="btn btn-table remove-row"><i class="fas fa-times"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="table-input" placeholder="Ex: 11h00min às 13h00min"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: ST ESTELA/1º SGT AELSON"></td>
+                            <td><button class="btn btn-table remove-row"><i class="fas fa-times"></i></button></td>
+                        </tr>
+                    `;
+                    
+                    document.getElementById('veiculos-body').innerHTML = `
+                        <tr>
+                            <td>1</td>
+                            <td><input type="text" class="table-input" placeholder="Ex: HONDA"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: POP 100"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: MOJ 7126 / 9C2HB02108R041162"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: AZUL"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: RESTRIÇÃO ADMINISTRATIVA"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: 09/12/2025 ÀS 17H50MIN"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: MAMANGUAPE"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: 3º SGT LIMA 522.235"></td>
+                            <td><button class="btn btn-table remove-veiculo"><i class="fas fa-times"></i></button></td>
+                        </tr>
+                    `;
+                    
+                    document.getElementById('chaves-body').innerHTML = `
+                        <tr>
+                            <td><input type="text" class="table-input" placeholder="Ex: 10/12/2025"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: Sala do Comando"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: 08h00"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: ST JOSUÉ"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: 17h00"></td>
+                            <td><input type="text" class="table-input" placeholder="Ex: Serviço administrativo"></td>
+                            <td><button class="btn btn-table remove-chave"><i class="fas fa-times"></i></button></td>
+                        </tr>
+                    `;
+                    
+                    localStorage.removeItem('relatorioOperacional');
+                    
+                    saveStatus.textContent = 'Formulário limpo';
+                    saveStatus.className = 'status-indicator status-unsaved';
+                    
+                    document.querySelectorAll('input, textarea, select').forEach(element => {
+                        if (element.type !== 'button') {
+                            element.addEventListener('input', autoSave);
+                            element.addEventListener('change', autoSave);
+                        }
+                    });
+                }
+            }
+            
+            function preparePDFContent() {
+                document.getElementById('pdf-data').textContent = document.getElementById('data').value || 'Dia 09 para o dia 10 de dezembro de 2025 (terça-feira para quarta-feira).';
+                document.getElementById('pdf-horario').textContent = document.getElementById('horario').value || 'Das 08h às 08h (24 horas).';
+                document.getElementById('pdf-escala').textContent = document.getElementById('escala').value || '902617';
+                document.getElementById('pdf-infoAdmin').textContent = document.getElementById('infoAdmin').value || '';
+                document.getElementById('pdf-instalacoes').textContent = document.getElementById('instalacoes').value || '';
+                document.getElementById('pdf-ocorrencias').textContent = document.getElementById('ocorrencias').value || 'Sem alterações.';
+                document.getElementById('pdf-remanejamento').textContent = document.getElementById('remanejamento').value || '';
+                document.getElementById('pdf-permutas').textContent = document.getElementById('permutas').value || '';
+                document.getElementById('pdf-dispensa').textContent = document.getElementById('dispensa').value || 'Sem Alterações.';
+                document.getElementById('pdf-faltas').textContent = document.getElementById('faltas').value || 'Sem alterações.';
+                document.getElementById('pdf-observacoes').textContent = document.getElementById('observacoes').value || '';
+                document.getElementById('pdf-alteracao-viatura').textContent = document.getElementById('alteracao-viatura').value || '';
+                document.getElementById('pdf-diversos').textContent = document.getElementById('diversos').value || '';
+                document.getElementById('pdf-local').textContent = document.getElementById('local').value || 'Mamanguape/PB, 10 de dezembro de 2025.';
+                document.getElementById('pdf-funcao').textContent = document.getElementById('funcao').value || 'CPU 17º BPM';
+                
+                const nomeCompleto = document.getElementById('nomeCompleto').value || '';
+                const qra = document.getElementById('qra').value || '';
+                const posto = document.getElementById('posto').value || '';
+                
+                const assinaturaElement = document.getElementById('pdf-assinatura');
+                if (nomeCompleto && qra && posto) {
+                    const nomeMaiusculo = nomeCompleto.toUpperCase();
+                    const qraMaiusculo = qra.toUpperCase();
+                    
+                    if (nomeMaiusculo.includes(qraMaiusculo)) {
+                        const partes = nomeMaiusculo.split(qraMaiusculo);
+                        
+                        if (partes.length === 2) {
+                            assinaturaElement.innerHTML = 
+                                partes[0] + 
+                                '<span class="qra-negrito">' + qraMaiusculo + '</span>' + 
+                                partes[1] + 
+                                ' - ' + posto;
+                        } else {
+                            assinaturaElement.innerHTML = nomeMaiusculo + ' - ' + posto;
+                        }
+                    } else {
+                        assinaturaElement.innerHTML = nomeMaiusculo + ' - ' + posto;
+                    }
+                } else if (nomeCompleto && posto) {
+                    assinaturaElement.innerHTML = nomeCompleto.toUpperCase() + ' - ' + posto;
+                } else {
+                    assinaturaElement.innerHTML = 'NOME DO MILITAR <span class="qra-negrito">QRA</span> EM NEGRITO - GRAU HIERÁRQUICO';
+                }
+                
+                const permanenciaBody = document.getElementById('pdf-permanencia');
+                permanenciaBody.innerHTML = '';
+                
+                const horariosPadrao = [
+                    '08h00min às 11h00',
+                    '11h00min às 13h00min',
+                    '13h00min às 17h00min',
+                    '17h00min às 20h00min',
+                    '20h00min às 23h00min',
+                    '23h00min às 02h00min',
+                    '02h00min às 05h00min',
+                    '05h00min às 08h00min'
+                ];
+                
+                const permanenciaData = getTableData('permanencia-body');
+                
+                horariosPadrao.forEach((horario, index) => {
+                    const row = document.createElement('tr');
+                    const tdHorario = document.createElement('td');
+                    const tdPermanente = document.createElement('td');
+                    
+                    tdHorario.textContent = horario;
+                    
+                    if (permanenciaData[index] && permanenciaData[index][1]) {
+                        tdPermanente.textContent = permanenciaData[index][1];
+                    } else if (permanenciaData[0] && permanenciaData[0][index]) {
+                        tdPermanente.textContent = permanenciaData[0][index] || '';
+                    }
+                    
+                    row.appendChild(tdHorario);
+                    row.appendChild(tdPermanente);
+                    permanenciaBody.appendChild(row);
+                });
+                
+                fillPDFTable('veiculos-body', 'pdf-veiculos', true);
+                fillPDFTable('chaves-body', 'pdf-chaves', false);
+            }
+            
+            function fillPDFTable(sourceId, targetId, isVeiculos = false) {
+                const sourceBody = document.getElementById(sourceId);
+                const targetBody = document.getElementById(targetId);
+                const rows = sourceBody.querySelectorAll('tr');
+                
+                targetBody.innerHTML = '';
+                
+                rows.forEach(row => {
+                    const newRow = document.createElement('tr');
+                    
+                    if (isVeiculos) {
+                        const cells = row.querySelectorAll('td');
+                        
+                        const numCell = document.createElement('td');
+                        numCell.textContent = cells[0].textContent || '';
+                        newRow.appendChild(numCell);
+                        
+                        for (let i = 1; i < cells.length - 1; i++) {
+                            const cell = cells[i];
+                            const newCell = document.createElement('td');
+                            const input = cell.querySelector('input');
+                            newCell.textContent = input ? input.value : '';
+                            newRow.appendChild(newCell);
+                        }
+                    } else {
+                        const inputs = row.querySelectorAll('input');
+                        inputs.forEach(input => {
+                            const cell = document.createElement('td');
+                            cell.textContent = input.value || '';
+                            newRow.appendChild(cell);
+                        });
+                    }
+                    
+                    targetBody.appendChild(newRow);
+                });
+            }
+            
+            async function exportToPDF() {
+                saveData();
+                preparePDFContent();
+                
+                try {
+                    const pdfTemplate = document.getElementById('pdf-template');
+                    pdfTemplate.classList.remove('hidden');
+                    
+                    pdfTemplate.style.width = '210mm';
+                    pdfTemplate.style.height = 'auto';
+                    
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+                    
+                    const pages = [
+                        document.getElementById('pdf-page-1'),
+                        document.getElementById('pdf-page-2'),
+                        document.getElementById('pdf-page-3')
+                    ];
+                    
+                    for (let i = 0; i < pages.length; i++) {
+                        if (i > 0) {
+                            pdf.addPage();
+                        }
+                        
+                        const canvas = await html2canvas(pages[i], {
+                            scale: 2,
+                            useCORS: true,
+                            logging: false,
+                            backgroundColor: '#FFFFFF',
+                            width: 210 * 3.78,
+                            height: pages[i].scrollHeight
+                        });
+                        
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 210;
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                        
+                        pdf.addImage(imgData, 'PNG', 30, 30, imgWidth - 50, imgHeight - 50);
+                    }
+                    
+                    const fileName = 'Relatorio_Operacional_17BPM_' + new Date().toISOString().slice(0,10) + '.pdf';
+                    pdf.save(fileName);
+                    
+                    pdfTemplate.classList.add('hidden');
+                    
+                    saveStatus.textContent = 'PDF gerado com sucesso!';
+                    saveStatus.className = 'status-indicator status-saved';
+                    
+                    setTimeout(() => {
+                        saveStatus.textContent = 'Dados salvos localmente';
+                    }, 3000);
+                    
+                } catch (error) {
+                    console.error('Erro ao gerar PDF:', error);
+                    alert('Erro ao gerar PDF. Tente novamente.');
+                    
+                    document.getElementById('pdf-template').classList.add('hidden');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
